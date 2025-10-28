@@ -1,25 +1,4 @@
-﻿// // See https://aka.ms/new-console-template for more information
-//
-// var cookieContainer = new System.Net.CookieContainer();
-// var handler = new System.Net.Http.HttpClientHandler { CookieContainer = cookieContainer };
-//
-// var client = new HttpClient(handler);
-//
-// //Get login page
-// var loginPage = await client.GetStringAsync("https://emekatorti.com/");
-// var doc = new HtmlAgilityPack.HtmlDocument();
-// doc.LoadHtml(loginPage);
-//
-// //extract hidden token using XPath or CSS selector
-// var csrfToken = doc.DocumentNode.SelectSingleNode("//input[@name='__RequestVerificationToken']")
-//     ?.GetAttributeValue("value", "");
-// Console.WriteLine("Hello, World!");
-
-// csharp
-using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Net;
 using HtmlAgilityPack;
 
 var cookieContainer = new CookieContainer();
@@ -54,4 +33,14 @@ doc.LoadHtml(loginPage);
 var csrfToken = doc.DocumentNode.SelectSingleNode("//input[@name='__RequestVerificationToken']")
     ?.GetAttributeValue("value", "");
 
+var formContent = new Dictionary<string, string>
+{
+    ["username"] = "username@username.com",
+    ["password"] = "password!",
+    ["__RequestVerificationToken"] = csrfToken,
+};
+var content = new FormUrlEncodedContent(formContent);
 
+var mainPage = await client.PostAsync("https://emekatorti.com/wp-login.php", content);
+
+Console.WriteLine(mainPage.StatusCode);
